@@ -5,6 +5,13 @@
 npm install
 ```
 
+Patch @restate/vuex:
+
+```
+cd node_modules
+patch -p0 < ../@reststate.patch 
+```
+
 ### Compiles and hot-reloads for development
 ```
 npm run serve

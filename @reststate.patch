@@ -1,0 +1,21 @@
+diff -ruN @reststate/client/src/Resource.js @reststate.NEW/client/src/Resource.js
+--- @reststate/client/src/Resource.js	2020-09-25 22:10:20.735115821 +0200
++++ @reststate.NEW/client/src/Resource.js	2020-09-25 22:48:19.825212323 +0200
+@@ -48,7 +48,7 @@
+     if (options.url) {
+       ({ url } = options);
+     } else {
+-      url = `${this.name}?${getOptionsQuery(options)}`;
++      url = `${this.name}/?${getOptionsQuery(options)}`;
+     }
+ 
+     return this.api
+@@ -69,7 +69,7 @@
+   where({ filter, options } = {}) {
+     const queryString = filterQueryString(filter);
+     return this.api
+-      .get(`${this.name}?${queryString}&${getOptionsQuery(options)}`)
++      .get(`${this.name}/?${queryString}&${getOptionsQuery(options)}`)
+       .then(extractData)
+       .catch(extractErrorResponse);
+   }
