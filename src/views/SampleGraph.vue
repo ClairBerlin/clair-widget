@@ -1,6 +1,6 @@
 <template>
   <div>
-    <h2>{{node.alias}} ({{node.device_id}})</h2>
+    <h2>{{node.alias}}</h2>
     <line-chart :chart-data="datacollection" :styles="chartsStyles" :options="chartsOptions"></line-chart>
   </div>
 </template>
@@ -43,15 +43,14 @@ export default {
             position: 'left',
             scaleLabel: {
               display: true,
-              labelString: 'ppm',
-              fontColor: '#f87979'
+              labelString: 'CO2 [ppm]'
             },
             ticks: {
               min: 0,
-              max: 2000
+              max: 1800
             },
             gridLines: {
-              color: ['#27ff00', '#27ff00', '#27ff00', '#95fe00', '#d0fc00', '#fff800', '#ffd400', '#ffaf00', '#ff8700', '#ff5900', '#ff0000', '#ff0000'].reverse()
+              color: ['#27ff00', '#27ff00', '#27ff00', '#95fe00', '#d0fc00', '#fff800', '#ffd400', '#ffaf00', '#ff8700', '#ff0000', '#ff0000'].reverse()
             }
           }, {
             id: 'temperatureAxis',
@@ -102,7 +101,6 @@ export default {
     const nodeId = this.$route.params.id
     this.loadNodeById({ id: nodeId }).then(() => {
       this.node = this.getNodeById({ id: nodeId }).attributes
-      console.log(this.node)
     }).catch((error) => console.log(error))
     this.loadTimeseriesById({
       id: nodeId,
@@ -112,13 +110,11 @@ export default {
     }).then(() => {
       const queryResult = this.getTimeseriesById({ id: nodeId })
       const timeseries = queryResult.attributes
-      console.log(timeseries)
       this.datacollection = {
         datasets: [
           {
             label: 'CO2',
-            fill: false,
-            borderColor: 'brown',
+            fill: true,
             yAxisID: 'co2Axis',
             data: timeseries.samples.map(s => { return { t: moment(1000 * s.timestamp_s), y: s.co2_ppm } })
           }
