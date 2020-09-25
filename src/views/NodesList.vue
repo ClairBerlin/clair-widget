@@ -24,7 +24,7 @@ export default {
   },
 
   mounted () {
-    this.loadAllNodes()
+    this.loadAllNodes().catch((error) => console.log(error))
   }
 }
 </script>
