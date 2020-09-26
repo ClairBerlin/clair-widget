@@ -1,0 +1,13 @@
+$theme-colors: (
+  "primary": #729fcf,
+  "danger": #ff4136
+);
+
+@import '~bootstrap/scss/bootstrap.scss';
+@import '~bootstrap-vue/src/index.scss';
+
+body {
+  font-family: 'Roboto', sans-serif;
+  font-size: 18px;
+  margin-bottom: 100px;
+}

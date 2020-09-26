@@ -1,20 +1,20 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
-import NodesList from '../views/NodesList.vue'
-import SampleGraph from '../views/SampleGraph.vue'
+import Home from '../views/Home.vue'
+import NodeView from '../views/NodeView.vue'
 
 Vue.use(VueRouter)
 
 const routes = [
   {
     path: '/',
-    name: 'Nodes',
-    component: NodesList
+    name: 'Start',
+    component: Home
   },
   {
     path: '/nodes/:id',
-    name: 'Sample Graph',
-    component: SampleGraph
+    name: 'Sensor-Ansicht',
+    component: NodeView
   }
 ]
 

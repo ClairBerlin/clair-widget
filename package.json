@@ -10,10 +10,19 @@
   "dependencies": {
     "@reststate/vuex": "^0.2.2",
     "axios": "^0.20.0",
+    "bootstrap": "^4.5.2",
+    "bootstrap-scss": "^4.5.2",
+    "bootstrap-vue": "^2.17.3",
     "chart.js": "^2.9.3",
+    "chartjs-adapter-date-fns": "^1.0.0",
+    "chartjs-adapter-luxon": "^0.2.2",
     "core-js": "^3.6.5",
+    "date-fns": "^2.16.1",
+    "luxon": "^1.25.0",
+    "sass": "^1.26.11",
     "vue": "^2.6.11",
     "vue-chartjs": "^3.5.1",
+    "vue-material-design-icons": "^4.9.0",
     "vue-router": "^3.2.0",
     "vuex": "^3.4.0"
   },
@@ -31,6 +40,8 @@
     "eslint-plugin-promise": "^4.2.1",
     "eslint-plugin-standard": "^4.0.0",
     "eslint-plugin-vue": "^6.2.2",
+    "node-sass": "^4.14.1",
+    "sass-loader": "^10.0.2",
     "vue-template-compiler": "^2.6.11"
   }
 }
