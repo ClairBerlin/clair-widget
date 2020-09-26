@@ -107,7 +107,6 @@ export default {
               // }
             ]
           }
-          console.log(collection)
           resolve(collection)
         }).catch((error) => reject(error))
       })
