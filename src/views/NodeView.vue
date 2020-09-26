@@ -83,8 +83,12 @@ export default {
             datasets: [
               {
                 label: 'CO2',
-                fill: true,
+                fill: false,
+                pointRadius: 0,
+                lineTension: 0,
+                borderWidth: 2,
                 yAxisID: 'co2Axis',
+                borderColor: '#729fcf',
                 data: timeseries.samples.map(s => { return { t: moment(1000 * s.timestamp_s), y: s.co2_ppm } })
               }
               // ,{
