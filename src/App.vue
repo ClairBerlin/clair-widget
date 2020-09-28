@@ -2,7 +2,7 @@
   <div id="app">
     <b-container>
       <b-navbar toggleable="lg" type="light">
-        <b-navbar-brand to="/">Clair Berlin e.V.</b-navbar-brand>
+        <b-navbar-brand to="/">Clair-Initiative</b-navbar-brand>
 
         <b-navbar-toggle target="nav-collapse"></b-navbar-toggle>
 

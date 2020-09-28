@@ -4,7 +4,7 @@
       <template v-slot:header>
         <div class="clearfix">
           <img class="float-right mx-4" src="@/assets/clair-logo-white.svg" width="150px"/>
-          Clair Berlin e.V.
+          Clair-Initiative
         </div>
       </template>
       <template v-slot:lead>
@@ -65,7 +65,7 @@
         <b-col cols="12" md="9">
           <p>
             Für <b>Entscheidungsträger*innen</b> in Verwaltung und Politik
-            sowie Wissenschaftler
+            sowie <b>Wissenschaftler*innen</b>
           </p>
           <p>
             Nutzen Sie die Open-Data-Basis der Clair-Initiative, um die
