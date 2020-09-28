@@ -24,9 +24,9 @@
             Für <b>Besucher*innen</b> von öffentlichen Räumen
           </p>
           <p>
-            Vertrauen Sie dem Clair-Label und planen Sie Ihren Besuch in dem
-            Restaurant, in dem Café oder in der Tagungsräumlichkeit, wo
-            nachgewiesenermaßen ein und Lüftungskonzept umgesetzt wird.
+            Vertrauen Sie dem Clair-Label und planen Sie Ihren Besuch im
+            Restaurant, im Café oder in einer Tagungsräumlichkeit dort, wo
+            nachgewiesenermaßen ein Lüftungskonzept umgesetzt wird.
           </p>
           <p>
             Bald mehr...
