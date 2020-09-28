@@ -20,12 +20,12 @@
     <b-card class="my-5">
       <b-row aligh-v="center">
         <b-col cols="12" md="9">
-          <p>
-            Für <b>Besucher*innen</b> von Restaurants, Cafés,
-            Schulungsräumlichkeiten und anderen öffentlichen Räumen:
+          <p class="text-secondary">
+            Für <b>Besucher*innen</b> von öffentlichen Räumen
           </p>
           <p>
-            Vertrauen Sie dem Clair-Label und planen Sie Ihren Besuch dort, wo
+            Vertrauen Sie dem Clair-Label und planen Sie Ihren Besuch in dem
+            Restaurant, in dem Café oder in der Tagungsräumlichkeit, wo
             nachgewiesenermaßen ein und Lüftungskonzept umgesetzt wird.
           </p>
           <p>
@@ -42,9 +42,9 @@
     <b-card class="my-5">
       <b-row aligh-v="center">
         <b-col cols="12" md="9">
-          <p>
+          <p class="text-secondary">
             Für <b>Betreiber*innen</b> von Gewerben und
-            <b>Veranstalter*innen</b>:
+            <b>Veranstalter*innen</b>
           </p>
           <p>
             Folgen Sie den Empfehlungen der Clair-Initiative, installieren Sie
@@ -63,9 +63,9 @@
     <b-card class="my-5">
       <b-row aligh-v="center">
         <b-col cols="12" md="9">
-          <p>
+          <p class="text-secondary">
             Für <b>Entscheidungsträger*innen</b> in Verwaltung und Politik
-            sowie Wissenschaftler:
+            sowie Wissenschaftler
           </p>
           <p>
             Nutzen Sie die Open-Data-Basis der Clair-Initiative, um die
