@@ -20,7 +20,7 @@
     <b-card class="my-5">
       <b-row aligh-v="center">
         <b-col cols="12" md="9">
-          <p class="text-secondary">
+          <p>
             Für <b>Besucher*innen</b> von öffentlichen Räumen
           </p>
           <p>
@@ -42,7 +42,7 @@
     <b-card class="my-5">
       <b-row aligh-v="center">
         <b-col cols="12" md="9">
-          <p class="text-secondary">
+          <p>
             Für <b>Betreiber*innen</b> von Gewerben und
             <b>Veranstalter*innen</b>
           </p>
@@ -63,7 +63,7 @@
     <b-card class="my-5">
       <b-row aligh-v="center">
         <b-col cols="12" md="9">
-          <p class="text-secondary">
+          <p>
             Für <b>Entscheidungsträger*innen</b> in Verwaltung und Politik
             sowie Wissenschaftler
           </p>
