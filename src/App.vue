@@ -2,14 +2,14 @@
   <div id="app">
     <b-container>
       <b-navbar toggleable="lg" type="light">
-        <b-navbar-brand to="/">Clair</b-navbar-brand>
+        <b-navbar-brand to="/">Clair Berlin e.V.</b-navbar-brand>
 
         <b-navbar-toggle target="nav-collapse"></b-navbar-toggle>
 
         <b-collapse id="nav-collapse" is-nav>
           <!-- Right aligned nav items -->
           <b-navbar-nav>
-            <b-nav-item-dropdown text="Clair-Sensoren" right>
+            <b-nav-item-dropdown text="Sensoren" right>
               <b-dropdown-item v-for="node in allNodes" :key="node.id" :to="'/nodes/' + node.id">
                 {{node.attributes.alias}}
               </b-dropdown-item>
