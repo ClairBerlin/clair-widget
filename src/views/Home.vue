@@ -8,7 +8,7 @@
         </div>
       </template>
       <template v-slot:lead>
-        Die&nbsp;Luft&nbsp;ist&nbsp;rein, hier&nbsp;geh&nbsp;ich&nbsp;rein.
+        Die&nbsp;Luft&nbsp;ist&nbsp;rein, hier&nbsp;geh'&nbsp;ich&nbsp;rein.
       </template>
       <hr class="my-4">
       <p>
