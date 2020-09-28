@@ -13,7 +13,13 @@ export default {
     datacollection: Object,
     timeUnit: String,
     height: String,
-    width: String
+    width: String,
+    xTicks: {
+      type: Object,
+      default: function () {
+        return {}
+      }
+    }
   },
   data () {
     return {
@@ -22,8 +28,12 @@ export default {
         height: this.height,
         width: this.width,
         margin: '50px auto'
-      },
-      chartsOptions: {
+      }
+    }
+  },
+  computed: {
+    chartsOptions: function () {
+      return {
         responsive: true,
         maintainAspectRatio: false,
         legend: {
@@ -34,7 +44,8 @@ export default {
             type: 'time',
             time: {
               unit: this.timeUnit
-            }
+            },
+            ticks: this.xTicks
           }],
           yAxes: [{
             id: 'co2Axis',
