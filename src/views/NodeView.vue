@@ -84,9 +84,11 @@ export default {
       node: {},
       activeTabIndex: 0,
       displayedFromMoment: moment().startOf('day'),
-      daycollection: {},
-      weekcollection: {},
-      monthcollection: {},
+      samplePoolMoments: {
+        from: moment().startOf('month'),
+        to: moment().startOf('month').add(1, 'M')
+      },
+      samplePool: [],
       sampleGraphWidth: '90%',
       sampleGraphHeight: 'calc(90vh - 320px)'
     }
@@ -117,8 +119,15 @@ export default {
       ][this.activeTabIndex]
     },
     displayedFromMomentIsCurrent: function () {
-      return this.displayedFromMoment.unix() === this.currentFromMoment.unix()
+      const displayedMoments = [
+        this.displayedDayMoments,
+        this.displayedWeekMoments,
+        this.displayedMonthMoments
+      ][this.activeTabIndex]
+      const currentValue = this.currentFromMoment.valueOf()
+      return currentValue < displayedMoments.to.valueOf()
     },
+
     displayedDayMoments: function () {
       var displayedDayToMoment = this.displayedFromMoment.clone()
       displayedDayToMoment.add(1, 'd')
@@ -127,9 +136,13 @@ export default {
         to: displayedDayToMoment
       }
     },
+    daycollection: function () {
+      return this.samplesToCollection(this.displayedDayMoments)
+    },
     displayedDayTicks: function () {
       return this.momentsToTicks(this.displayedDayMoments)
     },
+
     displayedWeekMoments: function () {
       var displayedWeekFromMoment = moment(this.displayedFromMoment).startOf('isoWeek')
       var displayedWeekToMoment = displayedWeekFromMoment.clone()
@@ -139,9 +152,13 @@ export default {
         to: displayedWeekToMoment
       }
     },
+    weekcollection: function () {
+      return this.samplesToCollection(this.displayedWeekMoments)
+    },
     displayedWeekTicks: function () {
       return this.momentsToTicks(this.displayedWeekMoments)
     },
+
     displayedMonthMoments: function () {
       var displayedMonthFromMoment = moment(this.displayedFromMoment).startOf('month')
       var displayedMonthToMoment = displayedMonthFromMoment.clone()
@@ -150,6 +167,9 @@ export default {
         from: displayedMonthFromMoment,
         to: displayedMonthToMoment
       }
+    },
+    monthcollection: function () {
+      return this.samplesToCollection(this.displayedMonthMoments)
     },
     displayedMonthTicks: function () {
       return this.momentsToTicks(this.displayedMonthMoments)
@@ -174,65 +194,76 @@ export default {
       ]
       return displayedTimePeriods[this.activeTabIndex]
     },
+    samplesToCollection: function (moments) {
+      const samples = this.samplePool.filter(s =>
+        s.timestamp_s >= moments.from.unix() &&
+        s.timestamp_s < moments.to.unix())
+      return {
+        datasets: [
+          {
+            label: 'CO2',
+            fill: false,
+            pointRadius: 0,
+            lineTension: 0,
+            borderWidth: 2,
+            yAxisID: 'co2Axis',
+            borderColor: '#729fcf',
+            data: samples.map(s => { return { t: moment(1000 * s.timestamp_s), y: s.co2_ppm } })
+          }
+        ]
+      }
+    },
     loadNode: function () {
       this.loadNodeById({ id: this.nodeId }).then(() => {
         this.node = this.getNodeById({ id: this.nodeId }).attributes
       }).catch((error) => console.log(error))
     },
-    loadCollection: function (collectionMoments) {
+    loadSamples: function (moments) {
+      console.log(`loading samples from ${moments.from.fromNow()} to ${moments.to.fromNow()}`)
       const promise = new Promise((resolve, reject) => {
         this.loadTimeseriesById({
           id: this.nodeId,
           options: {
-            from: collectionMoments.from.unix(),
-            to: collectionMoments.to.unix()
+            from: moments.from.unix(),
+            to: moments.to.unix()
           }
         }).then(() => {
-          const queryResult = this.getTimeseriesById({ id: this.nodeId })
-          const timeseries = queryResult.attributes
-          const collection = {
-            datasets: [
-              {
-                label: 'CO2',
-                fill: false,
-                pointRadius: 0,
-                lineTension: 0,
-                borderWidth: 2,
-                yAxisID: 'co2Axis',
-                borderColor: '#729fcf',
-                data: timeseries.samples.map(s => { return { t: moment(1000 * s.timestamp_s), y: s.co2_ppm } })
-              }
-            ]
-          }
-          resolve(collection)
+          resolve(this.getTimeseriesById({ id: this.nodeId }).attributes.samples)
         }).catch((error) => reject(error))
       })
       return promise
     },
-    loadAllCollections: async function () {
+    loadMissingSamples: async function () {
+      // assuming we're only missing samples from the past and samples are sorted chronologically
       try {
-        this.daycollection = await this.loadCollection(this.displayedDayMoments)
-        this.weekcollection = await this.loadCollection(this.displayedWeekMoments)
-        this.monthcollection = await this.loadCollection(this.displayedMonthMoments)
+        const toMoment = this.samplePool.length ? moment(1000 * this.samplePool[0].timestamp_s) : this.samplePoolMoments.to
+        const samples = await this.loadSamples({ from: this.samplePoolMoments.from, to: toMoment })
+        for (const sample of samples.reverse()) {
+          this.samplePool.unshift(sample)
+        }
       } catch (error) {
-        console.log('an error occured while fetching the collections:')
+        console.log('an error occured while loading missing samples:')
         console.log(error)
       }
-    },
-    loadAllData: function () {
-      this.loadNode()
-      this.loadAllCollections()
     }
   },
   mounted () {
-    this.loadAllData()
+    this.loadNode()
+    this.loadMissingSamples()
   },
   watch: {
     nodeId: function (newVal) {
-      this.loadAllData()
+      this.loadNode()
+      // empty sample pool
+      this.samplePool.splice(0)
+      // should we reset the displayed time period?
+      this.loadMissingSamples()
     },
     displayedFromMoment: function (newVal) {
-      this.loadAllCollections()
+      if (this.displayedFromMoment.valueOf() < this.samplePoolMoments.from.valueOf()) {
+        this.samplePoolMoments.from = this.displayedFromMoment.clone().startOf('month')
+        this.loadMissingSamples()
+      }
     }
   }
 }
