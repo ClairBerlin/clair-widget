@@ -114,8 +114,8 @@ export default {
     nextFromMoment: function () {
       return [
         this.displayedFromMoment.clone().add(1, 'd'),
-        this.displayedFromMoment.clone().add(1, 'w'),
-        this.displayedFromMoment.clone().add(1, 'M')
+        moment.min(this.currentFromMoment, this.displayedFromMoment.clone().add(1, 'w')),
+        moment.min(this.currentFromMoment, this.displayedFromMoment.clone().add(1, 'M'))
       ][this.activeTabIndex]
     },
     displayedFromMomentIsCurrent: function () {
