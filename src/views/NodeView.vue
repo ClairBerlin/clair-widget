@@ -48,7 +48,7 @@
             <b-button
               variant="outline-primary"
               @click="displayedFromMoment = currentFromMoment"
-              :disabled="displayedFromMoment.unix() === currentFromMoment.unix()"
+              :disabled="displayedFromMomentIsCurrent"
             >
               {{['Heute', 'Diese Woche', 'Dieser Monat'][activeTabIndex]}}
             </b-button>
@@ -57,6 +57,7 @@
             <b-button
               variant="outline-primary"
               @click="displayedFromMoment = nextFromMoment"
+              :disabled="displayedFromMomentIsCurrent"
             >
               <b-icon-arrow-right/>
             </b-button>
@@ -114,6 +115,9 @@ export default {
         this.displayedFromMoment.clone().add(1, 'w'),
         this.displayedFromMoment.clone().add(1, 'M')
       ][this.activeTabIndex]
+    },
+    displayedFromMomentIsCurrent: function () {
+      return this.displayedFromMoment.unix() === this.currentFromMoment.unix()
     },
     displayedDayMoments: function () {
       var displayedDayToMoment = this.displayedFromMoment.clone()
