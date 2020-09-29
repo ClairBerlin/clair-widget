@@ -26,7 +26,7 @@
             :datacollection="monthcollection"
             :width="sampleGraphWidth"
             :height="sampleGraphHeight"
-            timeUnit="week"
+            timeUnit="day"
             :xTicks="displayedMonthTicks"
           />
         </b-tab>
