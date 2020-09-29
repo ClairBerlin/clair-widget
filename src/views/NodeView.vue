@@ -124,10 +124,7 @@ export default {
       }
     },
     displayedDayTicks: function () {
-      return {
-        min: this.displayedDayMoments.from,
-        max: this.displayedDayMoments.to
-      }
+      return this.momentsToTicks(this.displayedDayMoments)
     },
     displayedWeekMoments: function () {
       var displayedWeekFromMoment = moment(this.displayedFromMoment).startOf('isoWeek')
@@ -139,10 +136,7 @@ export default {
       }
     },
     displayedWeekTicks: function () {
-      return {
-        min: this.displayedWeekMoments.from,
-        max: this.displayedWeekMoments.to
-      }
+      return this.momentsToTicks(this.displayedWeekMoments)
     },
     displayedMonthMoments: function () {
       var displayedMonthFromMoment = moment(this.displayedFromMoment).startOf('month')
@@ -154,10 +148,7 @@ export default {
       }
     },
     displayedMonthTicks: function () {
-      return {
-        min: this.displayedMonthMoments.from,
-        max: this.displayedMonthMoments.to
-      }
+      return this.momentsToTicks(this.displayedMonthMoments)
     }
   },
   methods: {
@@ -165,18 +156,32 @@ export default {
       loadNodeById: 'nodes/loadById',
       loadTimeseriesById: 'timeseries/loadById'
     }),
+    momentsToTicks: function (moments) {
+      return {
+        min: moments.from,
+        max: moments.to
+      }
+    },
+    displayTimePeriod: function (fromMoment) {
+      const displayedTimePeriods = [
+        fromMoment.format('dddd, D.M.YYYY'),
+        `Kalenderwoche ${fromMoment.format('w YYYY')}`,
+        fromMoment.format('MMMM YYYY')
+      ]
+      return displayedTimePeriods[this.activeTabIndex]
+    },
     loadNode: function () {
       this.loadNodeById({ id: this.nodeId }).then(() => {
         this.node = this.getNodeById({ id: this.nodeId }).attributes
       }).catch((error) => console.log(error))
     },
-    loadCollection: function (from, to) {
+    loadCollection: function (collectionMoments) {
       const promise = new Promise((resolve, reject) => {
         this.loadTimeseriesById({
           id: this.nodeId,
           options: {
-            from: from,
-            to: to
+            from: collectionMoments.from.unix(),
+            to: collectionMoments.to.unix()
           }
         }).then(() => {
           const queryResult = this.getTimeseriesById({ id: this.nodeId })
@@ -200,49 +205,19 @@ export default {
       })
       return promise
     },
-    loadDayCollection: function () {
-      console.log(`day: ${this.displayedDayMoments.from.fromNow()} to ${this.displayedDayMoments.to.fromNow()}`)
-      this.loadCollection(this.displayedDayMoments.from.unix(), this.displayedDayMoments.to.unix()).then((collection) => {
-        this.daycollection = collection
-      }).catch((error) => {
-        console.log('loading day collection failed')
+    loadAllCollections: async function () {
+      try {
+        this.daycollection = await this.loadCollection(this.displayedDayMoments)
+        this.weekcollection = await this.loadCollection(this.displayedWeekMoments)
+        this.monthcollection = await this.loadCollection(this.displayedMonthMoments)
+      } catch (error) {
+        console.log('an error occured while fetching the collections:')
         console.log(error)
-      })
-    },
-    loadWeekCollection: function () {
-      console.log(`week: ${this.displayedWeekMoments.from.fromNow()} to ${this.displayedWeekMoments.to.fromNow()}`)
-      this.loadCollection(this.displayedWeekMoments.from.unix(), this.displayedWeekMoments.to.unix()).then((collection) => {
-        this.weekcollection = collection
-      }).catch((error) => {
-        console.log('loading week collection failed')
-        console.log(error)
-      })
-    },
-    loadMonthCollection: function () {
-      console.log(`month: ${this.displayedMonthMoments.from.fromNow()} to ${this.displayedMonthMoments.to.fromNow()}`)
-      this.loadCollection(this.displayedMonthMoments.from.unix(), this.displayedMonthMoments.to.unix()).then((collection) => {
-        this.monthcollection = collection
-      }).catch((error) => {
-        console.log('loading month collection failed')
-        console.log(error)
-      })
-    },
-    loadAllCollections: function () {
-      this.loadDayCollection()
-      this.loadWeekCollection()
-      this.loadMonthCollection()
+      }
     },
     loadAllData: function () {
       this.loadNode()
       this.loadAllCollections()
-    },
-    displayTimePeriod: function (fromMoment) {
-      const displayedTimePeriods = [
-        fromMoment.format('dddd, D.M.YYYY'),
-        `Kalenderwoche ${fromMoment.format('w YYYY')}`,
-        fromMoment.format('MMMM YYYY')
-      ]
-      return displayedTimePeriods[this.activeTabIndex]
     }
   },
   mounted () {
