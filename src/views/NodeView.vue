@@ -90,7 +90,7 @@ export default {
       },
       samplePool: [],
       sampleGraphWidth: '90%',
-      sampleGraphHeight: 'calc(90vh - 320px)'
+      sampleGraphHeight: 'calc(90vh - 280px)'
     }
   },
   computed: {

@@ -26,8 +26,9 @@ export default {
       chartsStyles: {
         position: 'relative',
         height: this.height,
+        'max-height': '1000px',
         width: this.width,
-        margin: '50px auto'
+        margin: '20px auto'
       }
     }
   },
