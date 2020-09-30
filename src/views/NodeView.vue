@@ -1,69 +1,71 @@
 <template>
   <div>
     <b-card no-body>
-      <h2 class="text-center pt-2">{{node.alias}}</h2>
-      <b-tabs v-model="activeTabIndex" fill>
-        <b-tab title="Tag">
-          <SampleGraph
-            :datacollection="daycollection"
-            :width="sampleGraphWidth"
-            :height="sampleGraphHeight"
-            timeUnit="hour"
-            :xTicks="displayedDayTicks"
-          />
-        </b-tab>
-        <b-tab title="Woche">
-          <SampleGraph
-            :datacollection="weekcollection"
-            :width="sampleGraphWidth"
-            :height="sampleGraphHeight"
-            timeUnit="day"
-            :xTicks="displayedWeekTicks"
-          />
-        </b-tab>
-        <b-tab title="Monat">
-          <SampleGraph
-            :datacollection="monthcollection"
-            :width="sampleGraphWidth"
-            :height="sampleGraphHeight"
-            timeUnit="day"
-            :xTicks="displayedMonthTicks"
-          />
-        </b-tab>
-      </b-tabs>
-      <div class="text-center mb-4">
-        {{displayTimePeriod(displayedFromMoment)}}
-      </div>
-      <b-container class="mb-3">
-        <b-row align-v="center">
-          <b-col>
-            <b-button
-              variant="outline-primary"
-              @click="displayedFromMoment = previousFromMoment"
-            >
-              <b-icon-arrow-left/>
-            </b-button>
-          </b-col>
-          <b-col class="text-center">
-            <b-button
-              variant="outline-primary"
-              @click="displayedFromMoment = currentFromMoment"
-              :disabled="displayedFromMomentIsCurrent"
-            >
-              {{['Heute', 'Diese Woche', 'Dieser Monat'][activeTabIndex]}}
-            </b-button>
-          </b-col>
-          <b-col class="text-right">
-            <b-button
-              variant="outline-primary"
-              @click="displayedFromMoment = nextFromMoment"
-              :disabled="displayedFromMomentIsCurrent"
-            >
-              <b-icon-arrow-right/>
-            </b-button>
-          </b-col>
-        </b-row>
-      </b-container>
+      <b-overlay :show="loading > 0">
+        <h2 class="text-center pt-2">{{node.alias}}</h2>
+        <b-tabs v-model="activeTabIndex" fill>
+          <b-tab title="Tag">
+            <SampleGraph
+              :datacollection="daycollection"
+              :width="sampleGraphWidth"
+              :height="sampleGraphHeight"
+              timeUnit="hour"
+              :xTicks="displayedDayTicks"
+            />
+          </b-tab>
+          <b-tab title="Woche">
+            <SampleGraph
+              :datacollection="weekcollection"
+              :width="sampleGraphWidth"
+              :height="sampleGraphHeight"
+              timeUnit="day"
+              :xTicks="displayedWeekTicks"
+            />
+          </b-tab>
+          <b-tab title="Monat">
+            <SampleGraph
+              :datacollection="monthcollection"
+              :width="sampleGraphWidth"
+              :height="sampleGraphHeight"
+              timeUnit="day"
+              :xTicks="displayedMonthTicks"
+            />
+          </b-tab>
+        </b-tabs>
+        <div class="text-center mb-4">
+          {{displayTimePeriod(displayedFromMoment)}}
+        </div>
+        <b-container class="mb-3">
+          <b-row align-v="center">
+            <b-col>
+              <b-button
+                variant="outline-primary"
+                @click="displayedFromMoment = previousFromMoment"
+              >
+                <b-icon-arrow-left/>
+              </b-button>
+            </b-col>
+            <b-col class="text-center">
+              <b-button
+                variant="outline-primary"
+                @click="displayedFromMoment = currentFromMoment"
+                :disabled="displayedFromMomentIsCurrent"
+              >
+                {{['Heute', 'Diese Woche', 'Dieser Monat'][activeTabIndex]}}
+              </b-button>
+            </b-col>
+            <b-col class="text-right">
+              <b-button
+                variant="outline-primary"
+                @click="displayedFromMoment = nextFromMoment"
+                :disabled="displayedFromMomentIsCurrent"
+              >
+                <b-icon-arrow-right/>
+              </b-button>
+            </b-col>
+          </b-row>
+        </b-container>
+      </b-overlay>
     </b-card>
   </div>
 </template>
@@ -83,6 +85,7 @@ export default {
     return {
       node: {},
       activeTabIndex: 0,
+      loading: 0,
       displayedFromMoment: moment().startOf('day'),
       samplePoolMoments: {
         from: moment().startOf('month'),
@@ -214,9 +217,13 @@ export default {
       }
     },
     loadNode: function () {
+      this.loading += 1
       this.loadNodeById({ id: this.nodeId }).then(() => {
         this.node = this.getNodeById({ id: this.nodeId }).attributes
       }).catch((error) => console.log(error))
+        .finally(() => {
+          this.loading -= 1
+        })
     },
     loadSamples: function (moments) {
       console.log(`loading samples from ${moments.from.fromNow()} to ${moments.to.fromNow()}`)
@@ -235,6 +242,7 @@ export default {
     },
     loadMissingSamples: async function () {
       // assuming we're only missing samples from the past and samples are sorted chronologically
+      this.loading += 1
       try {
         const toMoment = this.samplePool.length ? moment(1000 * this.samplePool[0].timestamp_s) : this.samplePoolMoments.to
         const samples = await this.loadSamples({ from: this.samplePoolMoments.from, to: toMoment })
@@ -244,6 +252,8 @@ export default {
       } catch (error) {
         console.log('an error occured while loading missing samples:')
         console.log(error)
+      } finally {
+        this.loading -= 1
       }
     }
   },
