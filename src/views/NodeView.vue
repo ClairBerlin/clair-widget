@@ -88,7 +88,7 @@ export default {
       loading: 0,
       displayedFromMoment: moment().startOf('day'),
       samplePoolMoments: {
-        from: moment().startOf('month'),
+        from: moment().startOf('week').startOf('month'),
         to: moment().startOf('month').add(1, 'M')
       },
       samplePool: [],
