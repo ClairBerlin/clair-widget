@@ -88,8 +88,8 @@ export default {
       loading: 0,
       displayedFromMoment: moment().startOf('day'),
       samplePoolMoments: {
-        from: moment().startOf('week').startOf('month'),
-        to: moment().startOf('month').add(1, 'M')
+        from: moment().subtract(4, 'w').startOf('month'),
+        to: moment()
       },
       samplePool: [],
       sampleGraphWidth: '90%',
