@@ -87,13 +87,11 @@ export default {
       activeTabIndex: 0,
       loading: 0,
       displayedFromMoment: moment().startOf('day'),
-      samplePoolMoments: {
-        from: moment().subtract(4, 'w').startOf('month'),
-        to: moment()
-      },
+      oldestSampleMoment: moment().subtract(4, 'w').startOf('month'),
       samplePool: [],
       sampleGraphWidth: '90%',
-      sampleGraphHeight: 'calc(90vh - 280px)'
+      sampleGraphHeight: 'calc(90vh - 280px)',
+      refreshTimerId: -1
     }
   },
   computed: {
@@ -240,12 +238,12 @@ export default {
       })
       return promise
     },
-    loadMissingSamples: async function () {
+    loadPastSamples: async function () {
       // assuming we're only missing samples from the past and samples are sorted chronologically
       this.loading += 1
       try {
-        const toMoment = this.samplePool.length ? moment(1000 * this.samplePool[0].timestamp_s) : this.samplePoolMoments.to
-        const samples = await this.loadSamples({ from: this.samplePoolMoments.from, to: toMoment })
+        const toMoment = this.samplePool.length ? moment(1000 * this.samplePool[0].timestamp_s) : moment()
+        const samples = await this.loadSamples({ from: this.oldestSampleMoment, to: toMoment })
         for (const sample of samples.reverse()) {
           this.samplePool.unshift(sample)
         }
@@ -255,11 +253,29 @@ export default {
       } finally {
         this.loading -= 1
       }
+    },
+    loadRecentSamples: async function () {
+      if (this.samplePool.length === 0) return
+      try {
+        const newestSample = this.samplePool[this.samplePool.length - 1]
+        const samples = await this.loadSamples({ from: moment(1000 * newestSample.timestamp_s), to: moment() })
+        for (const sample of samples) {
+          this.samplePool.shift(sample)
+        }
+      } catch (error) {
+        console.log('an error occured while loading recent samples:')
+        console.log(error)
+      }
     }
   },
   mounted () {
     this.loadNode()
-    this.loadMissingSamples()
+    this.loadPastSamples()
+    // refresh once per minute
+    this.refreshTimerId = setInterval(this.loadRecentSamples, 60000)
+  },
+  beforeDestroy () {
+    clearInterval(this.refreshTimerId)
   },
   watch: {
     nodeId: function (newVal) {
@@ -267,12 +283,12 @@ export default {
       // empty sample pool
       this.samplePool.splice(0)
       // should we reset the displayed time period?
-      this.loadMissingSamples()
+      this.loadPastSamples()
     },
     displayedFromMoment: function (newVal) {
-      if (this.displayedFromMoment.valueOf() < this.samplePoolMoments.from.valueOf()) {
-        this.samplePoolMoments.from = this.displayedFromMoment.clone().startOf('month')
-        this.loadMissingSamples()
+      if (this.displayedFromMoment.valueOf() < this.oldestSampleMoment.valueOf()) {
+        this.oldestSampleMoment = this.displayedFromMoment.clone().startOf('month')
+        this.loadPastSamples()
       }
     }
   }
