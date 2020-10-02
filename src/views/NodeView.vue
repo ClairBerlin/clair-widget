@@ -260,7 +260,7 @@ export default {
         const newestSample = this.samplePool[this.samplePool.length - 1]
         const samples = await this.loadSamples({ from: moment(1000 * newestSample.timestamp_s), to: moment() })
         for (const sample of samples) {
-          this.samplePool.shift(sample)
+          this.samplePool.push(sample)
         }
       } catch (error) {
         console.log('an error occured while loading recent samples:')
