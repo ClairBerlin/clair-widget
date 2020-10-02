@@ -272,7 +272,7 @@ export default {
     this.loadNode()
     this.loadPastSamples()
     // refresh once per minute
-    this.refreshTimerId = setInterval(this.loadRecentSamples, 60000)
+    this.refreshTimerId = setInterval(this.loadRecentSamples, 120000)
   },
   beforeDestroy () {
     clearInterval(this.refreshTimerId)
