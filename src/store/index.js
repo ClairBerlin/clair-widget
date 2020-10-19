@@ -4,7 +4,7 @@ import Vue from 'vue'
 import Vuex from 'vuex'
 
 const httpClient = axios.create({
-  baseURL: '/api/inspect/v1/',
+  baseURL: '/api/v1/',
   headers: {
     common: {
       'Content-Type': 'application/vnd.api+json'
