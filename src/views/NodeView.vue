@@ -235,8 +235,6 @@ export default {
           }
         }).then(() => {
           const samples = this.getSamplesRelated({ parent }).map(d => d.attributes)
-          // sort samples chronologically
-          samples.sort(function (a, b) { return a.timestamp_s - b.timestamp_s })
           resolve(samples)
         }).catch((error) => reject(error))
       })
