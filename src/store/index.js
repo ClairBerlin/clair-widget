@@ -17,7 +17,7 @@ Vue.use(Vuex)
 export default new Vuex.Store({
   modules: {
     ...mapResourceModules({
-      names: ['nodes', 'timeseries'],
+      names: ['nodes', 'samples'],
       httpClient
     })
   }
