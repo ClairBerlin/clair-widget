@@ -97,7 +97,7 @@ export default {
   computed: {
     ...mapGetters({
       getNodeById: 'nodes/byId',
-      getTimeseriesById: 'timeseries/byId'
+      getSamplesRelated: 'samples/related'
     }),
     nodeId: function () {
       return this.$route.params.id
@@ -179,7 +179,7 @@ export default {
   methods: {
     ...mapActions({
       loadNodeById: 'nodes/loadById',
-      loadTimeseriesById: 'timeseries/loadById'
+      loadSamplesRelated: 'samples/loadRelated'
     }),
     momentsToTicks: function (moments) {
       return {
@@ -226,14 +226,16 @@ export default {
     loadSamples: function (moments) {
       console.log(`loading samples from ${moments.from.fromNow()} to ${moments.to.fromNow()}`)
       const promise = new Promise((resolve, reject) => {
-        this.loadTimeseriesById({
-          id: this.nodeId,
+        const parent = { type: 'nodes', id: this.nodeId }
+        this.loadSamplesRelated({
+          parent,
           options: {
-            from: moments.from.unix(),
-            to: moments.to.unix()
+            'filter[from]': moments.from.unix(),
+            'filter[to]': moments.to.unix()
           }
         }).then(() => {
-          resolve(this.getTimeseriesById({ id: this.nodeId }).attributes.samples)
+          const samples = this.getSamplesRelated({ parent }).map(d => d.attributes)
+          resolve(samples)
         }).catch((error) => reject(error))
       })
       return promise
@@ -271,7 +273,7 @@ export default {
   mounted () {
     this.loadNode()
     this.loadPastSamples()
-    // refresh once per minute
+    // refresh once every two minutes
     this.refreshTimerId = setInterval(this.loadRecentSamples, 120000)
   },
   beforeDestroy () {
