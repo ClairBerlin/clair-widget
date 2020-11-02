@@ -97,7 +97,7 @@ export default {
   computed: {
     ...mapGetters({
       getNodeById: 'nodes/byId',
-      getSamplesRelated: 'samples/related'
+      getTimeseriesRelated: 'timeseries/related'
     }),
     nodeId: function () {
       return this.$route.params.id
@@ -179,7 +179,7 @@ export default {
   methods: {
     ...mapActions({
       loadNodeById: 'nodes/loadById',
-      loadSamplesRelated: 'samples/loadRelated'
+      loadTimeseriesRelated: 'timeseries/loadRelated'
     }),
     momentsToTicks: function (moments) {
       return {
@@ -227,14 +227,14 @@ export default {
       console.log(`loading samples from ${moments.from.fromNow()} to ${moments.to.fromNow()}`)
       const promise = new Promise((resolve, reject) => {
         const parent = { type: 'nodes', id: this.nodeId }
-        this.loadSamplesRelated({
+        this.loadTimeseriesRelated({
           parent,
           options: {
             'filter[from]': moments.from.unix(),
             'filter[to]': moments.to.unix()
           }
         }).then(() => {
-          const samples = this.getSamplesRelated({ parent }).map(d => d.attributes)
+          const samples = this.getTimeseriesRelated({ parent }).attributes.samples
           resolve(samples)
         }).catch((error) => reject(error))
       })
