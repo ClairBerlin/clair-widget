@@ -1,5 +1,5 @@
 $theme-colors: (
-  "primary": #729fcf,
+  "primary": #007cb0,
   "danger": #ff4136
 );
 
@@ -9,4 +9,13 @@ $theme-colors: (
 body {
   font-family: 'Roboto', sans-serif;
   font-size: 18px;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+.navbar {
+  font-family: "Oxygen", sans-serif;
 }

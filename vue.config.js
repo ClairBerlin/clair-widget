@@ -2,8 +2,9 @@ module.exports = {
   devServer: {
     proxy: {
       '/api': {
-        target: 'https://clair-ev.de',
-        changeOrigin: true
+        target: 'http://localhost:8888',
+        // target: 'https://clair-ev.de',
+        // changeOrigin: true
       }
     }
   }

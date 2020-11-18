@@ -1,7 +1,7 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
 import Home from '../views/Home.vue'
-import NodeView from '../views/NodeView.vue'
+import SiteView from '../views/SiteView.vue'
 
 Vue.use(VueRouter)
 
@@ -12,9 +12,9 @@ const routes = [
     component: Home
   },
   {
-    path: '/nodes/:id',
-    name: 'Sensor-Ansicht',
-    component: NodeView
+    path: '/sites/:id',
+    name: 'Widget-Ansicht für Orte',
+    component: SiteView
   }
 ]
 

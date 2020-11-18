@@ -1,5 +1,5 @@
 import axios from 'axios'
-import { mapResourceModules } from '@reststate/vuex'
+import { resourceModule, mapResourceModules } from '@reststate/vuex'
 import Vue from 'vue'
 import Vuex from 'vuex'
 
@@ -16,8 +16,16 @@ Vue.use(Vuex)
 
 export default new Vuex.Store({
   modules: {
+    Address: resourceModule({
+      name: 'address',
+      httpClient: httpClient
+    }),
+    Organization: resourceModule({
+      name: 'organizations',
+      httpClient: httpClient
+    }),
     ...mapResourceModules({
-      names: ['nodes', 'timeseries'],
+      names: ['sites', 'rooms', 'installations', 'installation-timeseries'],
       httpClient
     })
   }
