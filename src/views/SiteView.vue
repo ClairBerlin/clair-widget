@@ -92,7 +92,7 @@ export default {
       getSiteById: 'sites/byId',
       getRoomsRelated: 'rooms/related',
       getInstallationsRelated: 'installations/related',
-      getInstallationTimeseriesRelated: 'installation-timeseries/related'
+      getInstallationById: 'installations/byId'
     }),
     siteId: function () {
       return this.$route.params.id
@@ -176,7 +176,7 @@ export default {
       loadSiteById: 'sites/loadById',
       loadRoomsRelated: 'rooms/loadRelated',
       loadInstallationsRelated: 'installations/loadRelated',
-      loadInstallationTimeseriesRelated: 'installation-timeseries/loadRelated'
+      loadInstallationById: 'installations/loadById'
     }),
     momentsToTicks: function (moments) {
       return {
@@ -205,7 +205,7 @@ export default {
             lineTension: 0,
             borderWidth: 2,
             yAxisID: 'co2Axis',
-            borderColor: '#729fcf',
+            borderColor: '#007cb0',
             data: samples.map(s => { return { t: moment(1000 * s.timestamp_s), y: s.co2_ppm } })
           }
         ]
@@ -214,17 +214,15 @@ export default {
     loadSamples: function (moments) {
       console.log(`loading samples from ${moments.from.fromNow()} to ${moments.to.fromNow()}`)
       const promise = new Promise((resolve, reject) => {
-        const parent = { type: 'installations', id: this.installationId }
-        const relationship = 'timeseries'
-        this.loadInstallationTimeseriesRelated({
-          parent,
-          relationship,
+        this.loadInstallationById({
+          id: this.installationId,
           options: {
+            include_timeseries: 1,
             'filter[from]': moments.from.unix(),
             'filter[to]': moments.to.unix()
           }
         }).then(() => {
-          const samples = this.getInstallationTimeseriesRelated({ parent, relationship }).attributes.samples
+          const samples = this.getInstallationById({ id: this.installationId }).attributes.timeseries
           resolve(samples)
         }).catch((error) => reject(error))
       })

@@ -1,4 +1,5 @@
 module.exports = {
+  publicPath: '/widget/',
   devServer: {
     proxy: {
       '/api': {
