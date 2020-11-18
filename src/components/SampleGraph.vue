@@ -53,7 +53,7 @@ export default {
             type: 'linear',
             position: 'left',
             scaleLabel: {
-              display: true,
+              display: false,
               labelString: 'CO2 [ppm]'
             },
             ticks: {
