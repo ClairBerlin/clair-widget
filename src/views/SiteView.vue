@@ -1,6 +1,6 @@
 <template>
   <b-card no-body>
-    <b-overlay :show="loading > 0">
+    <b-overlay :show="loading > 0 || errorOccurred">
       <div fluid class="d-flex flex-row align-items-center bg-primary py-2">
         <img src="@/assets/clair-logo-white.svg" class="float-left mx-3" width="40px"/>
         <div class="h3 text-white font-weight-normal m-0">{{ site.name }}</div>
@@ -58,6 +58,11 @@
           </b-col>
         </b-row>
       </b-container>
+      <template v-if="errorOccurred" #overlay>
+        <b-alert show variant="warning">
+          Die Messdaten dieses Ortes können zur Zeit leider nicht angezeigt werden.
+        </b-alert>
+      </template>
     </b-overlay>
   </b-card>
 </template>
@@ -75,6 +80,7 @@ export default {
   },
   data () {
     return {
+      errorOccurred: false,
       site: {},
       installationId: -1,
       activeTabIndex: 0,
@@ -240,6 +246,7 @@ export default {
       } catch (error) {
         console.log('an error occured while loading missing samples:')
         console.log(error)
+        this.errorOccurred = true
       } finally {
         this.loading -= 1
       }
@@ -255,20 +262,27 @@ export default {
       } catch (error) {
         console.log('an error occured while loading recent samples:')
         console.log(error)
+        this.errorOccurred = true
       }
     },
     loadSite: async function () {
       this.loading += 1
-      await this.loadSiteById({ id: this.siteId })
-      this.site = this.getSiteById({ id: this.siteId }).attributes
-      let parent = { type: 'sites', id: this.siteId }
-      await this.loadRoomsRelated({ parent })
-      const firstRoom = this.getRoomsRelated({ parent })[0]
-      parent = { type: 'rooms', id: firstRoom.id }
-      await this.loadInstallationsRelated({ parent })
-      const firstInstallation = this.getInstallationsRelated({ parent })[0]
-      this.installationId = firstInstallation.id
-      await this.loadPastSamples()
+      try {
+        await this.loadSiteById({ id: this.siteId })
+        this.site = this.getSiteById({ id: this.siteId }).attributes
+        let parent = { type: 'sites', id: this.siteId }
+        await this.loadRoomsRelated({ parent })
+        const firstRoom = this.getRoomsRelated({ parent })[0]
+        parent = { type: 'rooms', id: firstRoom.id }
+        await this.loadInstallationsRelated({ parent })
+        const firstInstallation = this.getInstallationsRelated({ parent })[0]
+        this.installationId = firstInstallation.id
+        await this.loadPastSamples()
+      } catch (error) {
+        console.log('an error occured while loading the site data:')
+        console.log(error)
+        this.errorOccurred = true
+      }
       this.loading -= 1
     }
   },
